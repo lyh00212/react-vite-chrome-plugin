@@ -18,8 +18,8 @@
     "background": {
         "service_worker": "background/service-worker.js"
     },
-    "permissions": ["activeTab", "tabs", "alarms"],
-    "host_permissions": [],
+    "permissions": ["activeTab", "tabs", "alarms", "commands", "storage"],
+    "host_permissions": ["http://*/*", "https://*/*"],
     "content_scripts": [
         {
             "js": ["content/content.js"],
@@ -35,5 +35,23 @@
             "matches": ["http://192.168.3.2:8080/*"],
             "use_dynamic_url": true
         }
-    ]
+    ],
+    "commands": {
+        "screenshot-selected-area": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Z",
+                "windows": "Ctrl+Shift+Z",
+                "mac": "Command+Shift+Z"
+            },
+            "description": "截取所选区域"
+        },
+        "screenshot-full-screen": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+X",
+                "windows": "Ctrl+Shift+X",
+                "mac": "Command+Shift+X"
+            },
+            "description": "截取全屏"
+        }
+    }
 }

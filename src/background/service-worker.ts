@@ -1,6 +1,7 @@
 console.log("background service-worker file");
 console.log("test hot update123");
 
+// 本地修改代码时，热更新
 chrome.management.getSelf((self) => {
     if (self.installType === "development") {
         // 监听的文件列表
@@ -17,8 +18,6 @@ chrome.management.getSelf((self) => {
         } = {};
         // reload 重新加载
         const reload = () => {
-            console.log("reload");
-
             chrome.tabs.query(
                 {
                     active: true,
@@ -39,23 +38,23 @@ chrome.management.getSelf((self) => {
                 fetch(item)
                     .then((res) => res.text())
                     .then((files) => {
-                        console.log(`Checking file: ${item}`);
+                        // console.log(`Checking file: ${item}`);
                         // console.log(`Current content: ${files}`);
                         // console.log(`Stored content: ${fileObj[item]}`);
 
                         if (!fileObj[item]) {
-                            console.log(
-                                "Storing initial content for the first time."
-                            );
+                            // console.log(
+                            //     "Storing initial content for the first time."
+                            // );
                             fileObj[item] = JSON.parse(JSON.stringify(files));
                         } else if (
                             JSON.stringify(fileObj[item]) !==
                             JSON.stringify(files)
                         ) {
-                            console.log("File content changed, reloading...");
+                            // console.log("File content changed, reloading...");
                             reload();
                         } else {
-                            console.log("File content unchanged.");
+                            // console.log("File content unchanged.");
                         }
                     })
                     .catch((error) => {
@@ -86,3 +85,45 @@ chrome.management.getSelf((self) => {
         });
     }
 });
+
+// 监听键盘快捷键
+chrome.commands.onCommand.addListener(
+    (command: string, tab?: chrome.tabs.Tab) => {
+        console.log(command, tab, "监听快捷键");
+        if (command === "screenshot-selected-area") {
+            // 截取所选区域
+            if (tab && tab.id) {
+                chrome.tabs.sendMessage(tab.id, {
+                    type: "screenshot-selected-area",
+                });
+            }
+        } else if (command === "screenshot-full-screen") {
+            // 截取全屏
+            if (tab && tab.id) {
+                chrome.tabs.sendMessage(tab.id, {
+                    type: "screenshot-full-screen",
+                });
+            }
+        }
+    }
+);
+
+// 截取全屏
+chrome.runtime.onMessage.addListener(
+    (req, sender, sendResponse: (response: any) => void) => {
+        console.log("background 截图");
+
+        if (req.type === "screenshot") {
+            chrome.tabs.captureVisibleTab(
+                undefined,
+                { format: "png" },
+                (dataUrl: string) => {
+                    console.log("screenshot------", dataUrl, sender);
+
+                    sendResponse({ image: dataUrl });
+                }
+            );
+            return true;
+        }
+    }
+);
