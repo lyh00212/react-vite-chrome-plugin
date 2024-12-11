@@ -1,5 +1,4 @@
 console.log("background service-worker file");
-console.log("test hot update123");
 
 // 本地修改代码时，热更新
 chrome.management.getSelf((self) => {
@@ -87,43 +86,61 @@ chrome.management.getSelf((self) => {
 });
 
 // 监听键盘快捷键
-chrome.commands.onCommand.addListener(
-    (command: string, tab?: chrome.tabs.Tab) => {
-        console.log(command, tab, "监听快捷键");
-        if (command === "screenshot-selected-area") {
-            // 截取所选区域
-            if (tab && tab.id) {
-                chrome.tabs.sendMessage(tab.id, {
-                    type: "screenshot-selected-area",
-                });
-            }
-        } else if (command === "screenshot-full-screen") {
-            // 截取全屏
-            if (tab && tab.id) {
-                chrome.tabs.sendMessage(tab.id, {
-                    type: "screenshot-full-screen",
-                });
-            }
-        }
+chrome.commands.onCommand.addListener((command: string) => {
+    if (
+        ["screenshot-selected-area", "screenshot-full-screen"].includes(command)
+    ) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id!, { type: command });
+        });
     }
-);
+});
 
 // 截取全屏
 chrome.runtime.onMessage.addListener(
     (req, sender, sendResponse: (response: any) => void) => {
-        console.log("background 截图");
-
         if (req.type === "screenshot") {
-            chrome.tabs.captureVisibleTab(
-                undefined,
-                { format: "png" },
-                (dataUrl: string) => {
-                    console.log("screenshot------", dataUrl, sender);
-
-                    sendResponse({ image: dataUrl });
-                }
-            );
+            chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
+                chrome.tabs.captureVisibleTab(
+                    tab[0].windowId,
+                    { format: "png", quality: 100 },
+                    (dataUrl: string) => {
+                        sendResponse({ image: dataUrl });
+                    }
+                );
+            });
             return true;
         }
     }
 );
+
+// 添加右侧菜单
+chrome.runtime.onInstalled.addListener(() => {
+    // 截取选择部分
+    chrome.contextMenus.create({
+        type: "normal",
+        title: "截取选择部分",
+        id: "screenshot-selected-area",
+        contexts: ["all"],
+    });
+    // 截取整个页面
+    chrome.contextMenus.create({
+        type: "normal",
+        title: "截取整个页面",
+        id: "screenshot-full-screen",
+        contexts: ["all"],
+    });
+});
+
+// 绑定菜单点击事件
+chrome.contextMenus.onClicked.addListener((info) => {
+    if (
+        ["screenshot-selected-area", "screenshot-full-screen"].includes(
+            info.menuItemId as string
+        )
+    ) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id!, { type: info.menuItemId });
+        });
+    }
+});
