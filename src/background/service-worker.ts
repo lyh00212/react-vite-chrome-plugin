@@ -98,7 +98,7 @@ chrome.commands.onCommand.addListener((command: string) => {
 
 // 截取全屏
 chrome.runtime.onMessage.addListener(
-    (req, sender, sendResponse: (response: any) => void) => {
+    (req, _, sendResponse: (response: any) => void) => {
         if (req.type === "screenshot") {
             chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
                 chrome.tabs.captureVisibleTab(

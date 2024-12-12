@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import "./App.css";
+import styles from "./App.module.less";
 
 interface LocalImg {
     [key: string]: string;
@@ -15,7 +15,7 @@ const App: FC = () => {
         getImg();
     }, []);
     return (
-        <div id="app">
+        <div className={styles["snapshot-page"]}>
             <img src={img} />
         </div>
     );

@@ -118,7 +118,7 @@ chrome.runtime.onMessage.addListener((req) => {
         }
         if (req.type === "destroy-screenshot-iframe") {
             // 销毁iframe
-            // destroy_screenshot_iframe();
+            remove_iframe();
         }
     }
     return false;
@@ -188,13 +188,13 @@ async function page_screenshot() {
     init_iframe();
 }
 
-const init_iframe = async () => {
+function init_iframe() {
     console.log("init");
     const addIframe = (id: string, pagePath: string) => {
         const contentIframe = document.createElement("iframe");
         contentIframe.id = id;
         contentIframe.style.cssText =
-            "width: 80%; height: 100%; position: fixed; inset: 0px; margin: 0px auto; z-index: 10000002; border: none;";
+            "width: 100%; height: 100%; position: fixed; inset: 0px; margin: 0px auto; z-index: 10000002; border: none;";
         const getContentPage = chrome.runtime.getURL(pagePath);
         contentIframe.src = getContentPage;
         document.body.appendChild(contentIframe);
@@ -202,4 +202,11 @@ const init_iframe = async () => {
     if (window.top === window.self) {
         addIframe("content-start-iframe", "contentPage/index.html");
     }
-};
+}
+
+function remove_iframe() {
+    const iframe = document.getElementById(
+        "content-start-iframe"
+    ) as HTMLElement;
+    iframe.remove();
+}
