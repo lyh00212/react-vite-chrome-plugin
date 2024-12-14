@@ -1,13 +1,8 @@
-import { FC } from "react";
-import { Button } from "antd";
-import "./App.css";
+import { RouterProvider } from "react-router-dom";
+import router from "./router/index";
 
-const App: FC = () => {
-    return (
-        <div id="app">
-            <Button>App-ceshi</Button>
-        </div>
-    );
-};
+function App() {
+    return <RouterProvider router={router}></RouterProvider>;
+}
 
 export default App;

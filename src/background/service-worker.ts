@@ -88,7 +88,11 @@ chrome.management.getSelf((self) => {
 // 监听键盘快捷键
 chrome.commands.onCommand.addListener((command: string) => {
     if (
-        ["screenshot-selected-area", "screenshot-full-screen"].includes(command)
+        [
+            "screenshot-selected-area",
+            "screenshot-full-screen",
+            "exit_screenshot",
+        ].includes(command)
     ) {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id!, { type: command });

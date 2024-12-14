@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "My React Chrome Ext",
+    "name": "Liumou Plugin",
     "version": "0.0.1",
-    "description": "Chrome 插件_12222",
+    "description": "Chrome Plugin By liumou",
     "icons": {
         "16": "icons/icon.png",
         "19": "icons/icon.png",
@@ -11,7 +11,7 @@
         "128": "icons/icon.png"
     },
     "action": {
-        "default_title": "React Chrome Ext",
+        "default_title": "Liumou Plugin",
         "default_icon": "icons/icon.png",
         "default_popup": "popup/index.html"
     },
@@ -60,6 +60,14 @@
                 "mac": "Command+Shift+X"
             },
             "description": "截取全屏"
+        },
+        "exit_screenshot": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+K",
+                "windows": "Ctrl+Shift+K",
+                "mac": "Command+Shift+K"
+            },
+            "description": "退出截屏"
         }
     }
 }

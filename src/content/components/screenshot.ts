@@ -108,17 +108,28 @@ function createButton(
 chrome.runtime.onMessage.addListener((req) => {
     // 由于manifest中设置了all_iframes:true，导致在存在iframe的页面，content.js会渲染多次，所以这里需要判断
     if (window.top === window.self) {
+        const image_container = document.getElementById(
+            "chrome-screenshot-image-container"
+        );
         if (req.type === "screenshot-selected-area") {
             // 截取所选区域
-            area_screenshot();
+            if (!image_container) {
+                area_screenshot();
+            }
         }
         if (req.type === "screenshot-full-screen") {
             // 截取全屏
-            page_screenshot();
+            if (!image_container) {
+                page_screenshot();
+            }
         }
         if (req.type === "destroy-screenshot-iframe") {
             // 销毁iframe
             remove_iframe();
+        }
+        if (req.type === "exit_screenshot") {
+            // 退出截屏
+            exit_screenshot();
         }
     }
     return false;
@@ -143,6 +154,7 @@ async function area_screenshot() {
     image_container.style.left = "0px";
     image_container.style.top = "0px";
     image_container.style.zIndex = "99999999999";
+    image_container.id = "chrome-screenshot-image-container";
     document.body.append(image_container);
     const image_dom = document.createElement("img");
     image_dom.src = screen_image.image;
@@ -209,4 +221,11 @@ function remove_iframe() {
         "content-start-iframe"
     ) as HTMLElement;
     iframe.remove();
+}
+
+function exit_screenshot() {
+    const image_container = document.getElementById(
+        "chrome-screenshot-image-container"
+    );
+    image_container?.remove();
 }
