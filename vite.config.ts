@@ -31,9 +31,23 @@ export default defineConfig({
                     __dirname,
                     "src/background/service-worker.ts"
                 ),
+                cssDetectorJs: path.resolve(
+                    __dirname,
+                    "src/cssDetector/cssDetector.js"
+                ),
+                cssDetectorCss: path.resolve(
+                    __dirname,
+                    "src/cssDetector/cssDetector.css"
+                ),
             },
             output: {
-                assetFileNames: "assets/[name]-[hash].[ext]", // 静态资源
+                // 静态资源
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name === "cssDetectorCss.css") {
+                        return "cssDetector/cssDetector.css";
+                    }
+                    return "assets/[name]-[hash].[ext]";
+                },
                 chunkFileNames: "js/[name]-[hash].js", // 代码分割中产生的 chunk
                 entryFileNames: (chunkInfo) => {
                     // 入口文件
@@ -41,6 +55,12 @@ export default defineConfig({
                         chunkInfo.facadeModuleId as string,
                         path.extname(chunkInfo.facadeModuleId as string)
                     );
+                    if (
+                        baseName === "cssDetector" &&
+                        chunkInfo.name === "cssDetectorJs"
+                    ) {
+                        return "cssDetector/cssDetector.js";
+                    }
                     const saveArr = ["content", "service-worker"];
                     return `[name]/${
                         saveArr.includes(baseName) ? baseName : chunkInfo.name

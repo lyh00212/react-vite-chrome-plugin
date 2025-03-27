@@ -24,7 +24,8 @@
         "alarms",
         "commands",
         "storage",
-        "contextMenus"
+        "contextMenus",
+        "scripting"
     ],
     "host_permissions": ["http://*/*", "https://*/*"],
     "content_scripts": [
@@ -68,6 +69,14 @@
                 "mac": "Command+Shift+K"
             },
             "description": "退出截屏"
+        },
+        "css-detector": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+P",
+                "windows": "Ctrl+Shift+P",
+                "mac": "Command+Shift+P"
+            },
+            "description": "css样式检测"
         }
     }
 }

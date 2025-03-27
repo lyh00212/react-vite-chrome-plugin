@@ -12,20 +12,30 @@ interface MenuItem {
 const menuList: MenuItem[] = [
     {
         title: "截取所选区域",
-        shortcutKey: "+Shift+X",
-        click: () => screenShot("screenshot-selected-area"),
+        shortcutKey: "+Shift+Z",
+        click: () => noticeToOther("screenshot-selected-area"),
     },
     {
         title: "截取全屏",
         shortcutKey: "+Shift+X",
-        click: () => screenShot("screenshot-full-screen"),
+        click: () => noticeToOther("screenshot-full-screen"),
+    },
+    {
+        title: "css样式检测",
+        shortcutKey: "+Shift+P",
+        click: () => noticeToOther("css-detector"),
     },
 ];
-const screenShot = (method: string) => {
+const noticeToOther = (method: string) => {
+    if (method !== "css-detector") {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id!, { type: method });
+        });
+    } else {
+        // 向background发送消息时，需要使用chrome.runtime.sendMessage
+        chrome.runtime.sendMessage({ type: method });
+    }
     window.close();
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id!, { type: method });
-    });
 };
 const MenuList: FC = () => {
     const [isCommand, setIsCommand] = useState<string>();

@@ -1,5 +1,98 @@
 (function () {
-    let cssDict = [];
+    let cssDict = [
+        { name: "font-size", type: "fonts", typeName: "字号", value: "" },
+        { name: "font-weight", type: "fonts", typeName: "字重", value: "" },
+        { name: "font-style", type: "fonts", typeName: "字体风格", value: "" },
+        { name: "height", type: "height", typeName: "高度", value: "" },
+        { name: "width", type: "width", typeName: "宽度", value: "" },
+        {
+            name: "line-height",
+            type: "line-height",
+            typeName: "行高",
+            value: "",
+        },
+        { name: "margin", type: "spacing", typeName: "外边距", value: "" },
+        {
+            name: "margin-top",
+            type: "spacing",
+            typeName: "外边距(上)",
+            value: "",
+        },
+        {
+            name: "margin-right",
+            type: "spacing",
+            typeName: "外边距(右)",
+            value: "",
+        },
+        {
+            name: "margin-bottom",
+            type: "spacing",
+            typeName: "外边距(下)",
+            value: "",
+        },
+        {
+            name: "margin-left",
+            type: "spacing",
+            typeName: "外边距(左)",
+            value: "",
+        },
+        { name: "padding", type: "spacing", typeName: "内边距", value: "" },
+        {
+            name: "padding-top",
+            type: "spacing",
+            typeName: "内边距(上)",
+            value: "",
+        },
+        {
+            name: "padding-right",
+            type: "spacing",
+            typeName: "内边距(右)",
+            value: "",
+        },
+        {
+            name: "padding-bottom",
+            type: "spacing",
+            typeName: "内边距(下)",
+            value: "",
+        },
+        {
+            name: "padding-left",
+            type: "spacing",
+            typeName: "内边距(左)",
+            value: "",
+        },
+        { name: "color", type: "color", typeName: "颜色", value: "" },
+        {
+            name: "background-color",
+            type: "color",
+            typeName: "背景色",
+            value: "",
+        },
+        { name: "border", type: "border", typeName: "边框", value: "" },
+        { name: "border-color", type: "边框颜色", value: "" },
+        { name: "border-top", type: "border", typeName: "边框(上)", value: "" },
+        {
+            name: "border-right",
+            type: "border",
+            typeName: "边框(右)",
+            value: "",
+        },
+        {
+            name: "border-bottom",
+            type: "border",
+            typeName: "边框(下)",
+            value: "",
+        },
+        {
+            name: "border-left",
+            type: "border",
+            typeName: "边框(左)",
+            value: "",
+        },
+        { name: "border-radius", type: "radius", typeName: "圆角", value: "" },
+        { name: "box-shadow", type: "shadow", typeName: "阴影", value: "" },
+        { name: "text-shadow", type: "shadow", typeName: "阴影", value: "" },
+    ];
 
     // 颜色相关样式
     let colorDic = ["color", "background-color", "border-color"];
@@ -84,7 +177,7 @@
                 : innerText || "无";
     }
     // 是否是颜色样式，是则转化为16进制
-    function isColor(property, propertyValue) {
+    function isColor(propertyName, propertyValue) {
         let result = "";
         if (colorDic.indexOf(propertyName) > -1) {
             result = `<span class='css_detector_container_box' style='backgroundColor:${propertyValue}'></span>${propertyValue}`;
@@ -96,14 +189,14 @@
     // 鼠标移动，给hover卡片里填充内容
     function cssMouseOver(e) {
         const document = getDocument();
-        const container = document.getElementById("css_detecter_container");
+        const container = document.getElementById("css_detector_container");
+
         if (!container) {
             return;
         }
-        // TODO 图片看不清 记得补充
         container.firstChild.innerHTML = `<div>元素名：${this.tagName.toLowerCase()}</div><div>类名：${
             this.className
-        }</div><div style='color:#1c79f4;'>操作：按Esc退出：按F键冻结：........</div>`;
+        }</div><div style='color:#1c79f4;'>操作：按Esc退出；按F键冻结,可固定住卡片进行查看，再按F解冻</div>`;
         if (this.tagName !== "body") {
             this.style.outline = "1px dashed #f00";
             currentElement = this;
@@ -123,9 +216,9 @@
                 domMap.set(curDoc, dom);
             }
         }
-        const element = document.defaultView.getComputedStyle(this.null);
+        const element = document.defaultView.getComputedStyle(this, null);
         updateCss(element, currentElement);
-        e.stopPropageation();
+        e.stopPropagation();
         // 通知spacing触发鼠标移动事件
         window.mouseEventEle = e;
         window.postMessage({ type: "spacing-mouse-move" }, "*");
@@ -168,7 +261,7 @@
         if (!inView) {
             container.style.top = window.pageYOffset + 20 + "px";
         }
-        e.stopPropageation();
+        e.stopPropagation();
         // 通知spacing触发鼠标移动事件
         window.mouseEventEle = e;
         window.postMessage({ type: "spacing-mouse-move" }, "*");
@@ -176,7 +269,7 @@
     // 鼠标移出，将边框取消掉
     function cssMouseOut(e) {
         this.style.outline = "";
-        e.stopPropageation();
+        e.stopPropagation();
         // 通知spacing触发鼠标移出事件
         window.mouseEventEle = e;
         window.postMessage({ type: "spacing-mouse-out" }, "*");
@@ -226,7 +319,7 @@
             let elements = [];
             if (element && element.hasChildNodes()) {
                 elements.push(element);
-                let childs = element.hasChildNodes;
+                let childs = element.childNodes;
                 for (let i = 0; i < childs.length; i++) {
                     if (childs[i].hasChildNodes()) {
                         elements = elements.concat(
@@ -260,7 +353,7 @@
                 cardEle.id = "css_detector_container";
                 // 创建容器头部header
                 let header = document.createElement("div");
-                header.id = "css_detector_header";
+                header.id = "css_detector_container_header";
                 cardEle.appendChild(header);
                 // 创建容器内容区域body
                 let body = document.createElement("div");
@@ -286,7 +379,7 @@
                 cardEle.appendChild(body);
                 cssDict.map(function (item) {
                     let tr = document.createElement("tr");
-                    tr.id = `css_container_${item.name}`;
+                    tr.id = `css_detector_${item.name}`;
                     let td1 = document.createElement("td");
                     td1.className = "css_detector_container_td1";
                     td1.innerHTML = item.name;
@@ -417,10 +510,10 @@
     }
     // 键盘按下的事件
     function cssDetectorKeyListener(e) {
-        if (!cssDetector || !cssDetector.isEnable()) return;
+        if (!cssDetector || !cssDetector.isEnabled()) return;
         // 按下ESC键，直接退出
         if (e.keyCode === 27) {
-            cssDetector.disable();
+            cssDetector.destroy();
             // 销毁spacing实例
             window.postMessage({ type: "spacing-destroy" }, "*");
         }
