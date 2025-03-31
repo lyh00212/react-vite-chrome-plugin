@@ -39,6 +39,10 @@ export default defineConfig({
                     __dirname,
                     "src/cssDetector/cssDetector.css"
                 ),
+                spaceDetector: path.resolve(
+                    __dirname,
+                    "src/spaceDetector/spacing.ts"
+                ),
             },
             output: {
                 // 静态资源

@@ -8,6 +8,7 @@ chrome.management.getSelf((self) => {
             "http://127.0.0.1:5501/dist/content/content.js",
             "http://127.0.0.1:5501/dist/contentPage/contentPage.js",
             "http://127.0.0.1:5501/dist/cssDetector/cssDetector.js",
+            "http://127.0.0.1:5501/dist/spaceDetector/spaceDetector.js",
         ];
         // 文件列表内容字段
         const fileObj: {

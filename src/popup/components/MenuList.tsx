@@ -25,9 +25,14 @@ const menuList: MenuItem[] = [
         shortcutKey: "+Shift+P",
         click: () => noticeToOther("css-detector"),
     },
+    {
+        title: "间距检测",
+        shortcutKey: "+Shift+K",
+        click: () => noticeToOther("space-detector"),
+    },
 ];
 const noticeToOther = (method: string) => {
-    if (method !== "css-detector") {
+    if (!["css-detector", "space-detector"].includes(method)) {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id!, { type: method });
         });

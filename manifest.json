@@ -62,14 +62,6 @@
             },
             "description": "截取全屏"
         },
-        "exit_screenshot": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+K",
-                "windows": "Ctrl+Shift+K",
-                "mac": "Command+Shift+K"
-            },
-            "description": "退出截屏"
-        },
         "css-detector": {
             "suggested_key": {
                 "default": "Ctrl+Shift+P",
@@ -77,6 +69,14 @@
                 "mac": "Command+Shift+P"
             },
             "description": "css样式检测"
+        },
+        "space-detector": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+K",
+                "windows": "Ctrl+Shift+K",
+                "mac": "Command+Shift+K"
+            },
+            "description": "间距检测"
         }
     }
 }
